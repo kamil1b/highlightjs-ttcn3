@@ -3,13 +3,11 @@ Language: TTCN3
 Author: Kamil Łuczak
 Description: Language definition for ttcn3 files
 */
-
-module.exports = function(hljs) {
-    // keywords from https://www.xsharp.eu/help/keywords.html
-    const NORMAL_KEYWORDS = ['alt', 'break', 'case', 'continue', 'do', 'else', 'for', 'goto', 'if', 'interleave', 'label', 'repeat', 'return', 'select', 'while', 'all', 'any', 'from', 'complement', 'decmatch', 'pattern', 'permutation', 'present', 'subset', 'superset', 'value', 'char', 'except', 'exception', 'ifpresent', 'language', 'mixed', 'nowait', 'recursive', 'sender', 'to'];
+function register_ttcn3_langauge(hljs){
+    const NORMAL_KEYWORDS = ['alt', 'break', 'case', 'continue', 'const', 'do', 'else', 'for', 'goto', 'if', 'interleave', 'label', 'repeat', 'return', 'select', 'while', 'all', 'any', 'from', 'complement', 'decmatch', 'pattern', 'permutation', 'present', 'private' ,'subset', 'superset', 'value', 'char', 'except', 'exception', 'ifpresent', 'language', 'mixed', 'nowait', 'recursive', 'sender', 'to'];
   
     const TYPES = [
-      'address', 'anytype', 'bitstring', 'boolean', 'charstring', 'component', 'default', 'enumerated', 'float', 'hexstring', 'integer', 'message', 'octetstring', 'port', 'procedure', 'record\s+of', 'record', 'set\s+of', 'set', 'timer', 'union', 'universal', 'verdicttype',
+      'address', 'anytype', 'bitstring', 'boolean',  'charstring', 'component', 'default', 'enumerated', 'float', 'hexstring', 'integer', 'message', 'octetstring', 'port', 'procedure', 'record\s+of', 'record', 'set\s+of', 'set', 'timer', 'union', 'universal', 'verdicttype',
     ];
   
     const LITERALS = [
@@ -26,31 +24,34 @@ module.exports = function(hljs) {
       literal: LITERALS,
       built_in: BUILT_IN
     };
-  
-    return {
+
+    const LINE_COMMENT= hljs.COMMENT('//', '$', {
+      contains: [
+        {
+          begin: /\\\n/
+        }
+      ]
+    });
+    
+    const MULTI_LINE_COMMENT = hljs.COMMENT(
+      '/\\*', // begin
+      '\\*/', // end
+      {
+        contains: [
+          {
+            scope: 'doc', begin: '@\\w+'
+          }
+        ]
+      }
+    )
+
+    hljs.registerLanguage("ttcn3",(()=>{"use strict";return _=>({
       name: "ttcn3",
-      case_insensitive: true,
+      case_insensitive: false,
       keywords: KEYWORDS,
       contains: [
-        hljs.COMMENT('//', {
-          contains: [
-            {
-              scope: 'doc',
-              begin: /\\\n/
-            }
-          ]
-        }),
-        hljs.COMMENT(
-          '/\\*', // begin
-          '\\*/', // end
-          {
-            contains: [
-              {
-                scope: 'doc', begin: '@\\w+'
-              }
-            ]
-          }
-        )
+        LINE_COMMENT,
+        MULTI_LINE_COMMENT,
       ]
-    };
-  };
+    })})());
+}
